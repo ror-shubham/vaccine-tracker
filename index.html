@@ -161,7 +161,7 @@
     } else {
       const loaderTable = getLoader('loaderDistrict');
       $("#tbody").empty();
-      const tr = `<tr class="loaderTable"><td colspan="4" align="center">${loaderTable}</td></tr>`
+      const tr = `<tr class="loaderTable" id="loaderTable"><td colspan="4" align="center">${loaderTable}</td></tr>`
       $("#tbody").append(tr);
 
       if (selectedDistrict !== "" && selectedDistrict !== "All districts" ){
@@ -171,6 +171,10 @@
           return center.sessions.some(session => session.available_capacity > 0 && session.min_age_limit < 45)
         })
         centers = [...centersFin]
+        for (center of centersFin){
+          const trData = `<tr><td>${center.name}</td><td>${center.block_name}</td><td>${center.district_name}</td><td>${center.fee_type}</td></tr>`
+          $("#tbody").append(trData);
+        }
       } else if (districts.length !== 0){
         centers = []
         for (const district of districts){
@@ -180,14 +184,16 @@
           const centersToAddFiltered = centersToAdd.filter(center => {
             return center.sessions.some(session => session.available_capacity > 0 && session.min_age_limit < 45)
           })
+          $('#loaderTable').remove()
+          for (center of centersToAddFiltered){
+            const trData = `<tr><td>${center.name}</td><td>${center.block_name}</td><td>${center.district_name}</td><td>${center.fee_type}</td></tr>`
+            $("#tbody").append(trData);
+          }
+          $("#tbody").append(tr);
           centers.push(...centersToAddFiltered);
         }
       }
-      $("#tbody").empty()
-      for (center of centers){
-        const tr = `<tr><td>${center.name}</td><td>${center.block_name}</td><td>${center.district_name}</td><td>${center.fee_type}</td></tr>`
-        $("#tbody").append(tr);
-      }
+      $('#loaderTable').remove()
       if (centers.length === 0){
         const tr = `<tr><td colspan="4" align="center">Sorry, nothing found for your search!</td></tr>`
         $("#tbody").append(tr);
